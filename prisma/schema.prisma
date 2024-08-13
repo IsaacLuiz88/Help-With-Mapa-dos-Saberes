@@ -56,4 +56,21 @@ model Media {
   espacos   Espacos @relation(name: "EspacosMidias", fields: [espacosId], references: [id])
 }
 
+//Você precisará adicionar uma tabela Usuarios ao seu esquema para armazenar os visitantes que fazem login. Esta tabela será separada dos bolsistas:
+//Aqui, Usuario é a tabela que vai armazenar os dados dos visitantes, e Postagem armazena as postagens que eles podem criar.
+model Usuario {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  email       String  @unique
+  senha_hash  String
+  postagem    Postagem[]
+}
 
+model Postagem {
+  id          Int     @id @default(autoincrement())
+  titutlo     String
+  conteudo    String
+  cretedAt    DateTime  @default(now())
+  usuarioId   Int
+  usuario     Usuario @relation(fields: [usuarioId], references: [id])
+}
