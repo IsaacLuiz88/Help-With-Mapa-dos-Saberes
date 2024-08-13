@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  
+  
+}
+
+model Companies {
+  id                Int                 @id @default(autoincrement())
+  nome              String    
+  cnpj              String              @unique @db.VarChar(14)
+  end_emp_id        Int?
+  CEP               String              @db.VarChar(8)
+  use_emp_id        Int?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+
+  @@map("companies")
+
+  PointsCollection PointsCollection[]   @relation(name: "CompanyPointsCollection")
+}
+
+model PointsCollection {
+  id                    Int      @id @default(autoincrement())
+  nome                  String   
+  CEP                   String   @db.VarChar(8)
+  end_pco_id            Int?
+  emp_pco_id            Int?
+  horario_funcionamento String   @db.VarChar(5)
+  dias_funcionamento    String   @db.VarChar(8)
+  telefone              String?  @db.VarChar(13)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  companies_Id          Int?
+  companies             Companies? @relation(name: "CompanyPointsCollection", fields: [companies_Id], references: [id])
+
+  @@map("points_collection")
+}
+
