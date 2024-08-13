@@ -16,36 +16,44 @@ datasource db {
   
 }
 
-model Companies {
+model Bolsistas {
   id                Int                 @id @default(autoincrement())
   nome              String    
-  cnpj              String              @unique @db.VarChar(14)
-  end_emp_id        Int?
-  CEP               String              @db.VarChar(8)
-  use_emp_id        Int?
-  created_at        DateTime            @default(now())
-  updated_at        DateTime            @updatedAt
+  titulo_do_pl      String              
+  campus_de_origem  String
+  matricula         String              @db.VarChar(15)
 
-  @@map("companies")
 
-  PointsCollection PointsCollection[]   @relation(name: "CompanyPointsCollection")
+  espacos           Espacos[]           @relation(name: "BolsistaEspacos") // Relacionamento 1:N com Espacos
+
+  @@map("bolsistas")
 }
 
-model PointsCollection {
-  id                    Int      @id @default(autoincrement())
+model Espacos {
+  id                    Int       @id @default(autoincrement())
   nome                  String   
-  CEP                   String   @db.VarChar(8)
-  end_pco_id            Int?
-  emp_pco_id            Int?
-  horario_funcionamento String   @db.VarChar(5)
-  dias_funcionamento    String   @db.VarChar(8)
-  telefone              String?  @db.VarChar(13)
-  created_at            DateTime @default(now())
-  updated_at            DateTime @updatedAt
+  data                  DateTime?
+  endereco              String
+  contato               String
+  email                 String   
+  descricao             String   
+  
+  midias                Media[]   @relation(name: "EspacosMidias") // Relacionamento 1:N com Media
 
-  companies_Id          Int?
-  companies             Companies? @relation(name: "CompanyPointsCollection", fields: [companies_Id], references: [id])
-
+  bolsistaId            Int       // Chave estrangeira para o bolsista
+  bolsista              Bolsistas @relation(name: "BolsistaEspacos", fields: [bolsistaId], references: [id])
+  
+  
   @@map("points_collection")
 }
+
+model Media {
+  id       Int     @id @default(autoincrement())
+  url      String
+  type     String  // 'image' ou 'video'
+  
+  espacosId Int
+  espacos   Espacos @relation(name: "EspacosMidias", fields: [espacosId], references: [id])
+}
+
 
